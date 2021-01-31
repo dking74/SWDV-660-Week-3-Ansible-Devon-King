@@ -1,0 +1,6 @@
+# Playbook to install mongodb and hello world to ec2
+- hosts: webservers
+  tasks:
+    - name: Copy Hellworld Application
+    - name: Install MongoDB
+      yum: pkg=mongodb state=installed
