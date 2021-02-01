@@ -1,6 +1,39 @@
 # Playbook to install mongodb and hello world to ec2
 - hosts: webservers
   tasks:
-    - name: Copy Hellworld Application
-    - name: Install MongoDB
-      yum: pkg=mongodb state=installed
+    - name: Install dependencies
+      yum:
+        name: git
+        state: latest
+      become: yes
+
+    - name: Add MongoDB Yum Repository
+      yum_repository:
+        name: mongodb-org
+        description: Add the repo for mongodb to ec2 instance
+        baseurl: https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.0/x86_64/
+        gpgcheck: 1
+        enabled: 1
+        gpgkey: https://www.mongodb.org/static/pgp/server-4.0.asc
+      become: yes
+
+    - name: Install MongoDB V4
+      yum:
+        name: mongodb-org
+        state: latest
+      become: yes
+
+    - name: Clone hello-world repo for application
+      git:
+        repo: https://github.com/dking74/SWDV-660-Week-3-Devon-King.git
+        dest: /home/ec2-user/SWDV-660-Week-3-Devon-King
+
+    - name: Copy hello-world config
+      copy:
+        src: /home/ec2-user/SWDV-660-Week-3-Devon-King/helloworld.conf
+        dest: /etc/init/helloworld.conf
+        remote_src: yes
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
